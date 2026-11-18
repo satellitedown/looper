@@ -1,4 +1,4 @@
-# Looper 0.3.0
+# Looper 0.3.1
 
 A desktop app for coding with a local model. It runs entirely on your Mac: the model, the agent and your files never leave the machine.
 
@@ -11,7 +11,7 @@ A desktop app for coding with a local model. It runs entirely on your Mac: the m
 
 ## Install
 
-1. Open the downloaded `Looper_0.3.0_aarch64.dmg`.
+1. Open the downloaded `Looper_0.3.1_aarch64.dmg`.
 2. Drag **Looper** into **Applications**.
 3. Open it. The app is not notarized, so macOS shows **"Looper" Not Opened**. Click **Done**.
 4. Allow it once, either way:
@@ -27,11 +27,17 @@ A desktop app for coding with a local model. It runs entirely on your Mac: the m
 - **The agent**: OMP 18.22.1, bundled, with a small tool set (read, grep, glob, edit, write, bash) and a system prompt written for a small model.
 - **One conversation at a time**, each in its own thread with its own approvals, diffs and revert.
 
+## New in 0.3.1
+
+**It no longer goes exploring when nothing was asked.** Said hello, 0.3.0 could answer "Let me explore the project" and start listing folders; in a chat without a folder it then read its way through Looper's own files. Its instructions told it to act and to learn about the project, and said nothing about a message that asks for no work. Now they do. Of 120 first messages that ask for nothing (greetings, thanks, general questions) the model answers 118 without calling a tool; with the prompt of 0.3.0 it called one on 16 of 60. Messages that do ask for work got a tool call every time, 80 of 80. The model the app ran before did the same thing, on 29 of 60, so this is as old as the app.
+
+Nothing else changed: the same model, drafter and engine. On the 160 generated coding tasks the new prompt made no difference we could measure: 106 done, 44 partly done and 10 failed, against 108, 40 and 12 with the prompt of 0.3.0.
+
 ## New in 0.3.0: another model
 
-Up to 0.2.1 the app ran a looped variant of Qwen3.5-9B that we had abliterated ourselves. In use it could think in circles: the same few thoughts, over and over, until the reply ran out of tokens. This version runs plain Qwen3.5-9B instead, in Abliterant's [RANA](https://huggingface.co/abliterant/Qwen3.5-9B-RANA-abliterated) abliteration, and the engine ends any thinking after 1,024 tokens.
+Up to 0.2.1 the app ran a looped variant of Qwen3.5-9B that we had abliterated ourselves. In use it could think in circles: the same few thoughts, over and over, until the reply ran out of tokens. Since 0.3.0 it runs plain Qwen3.5-9B instead, in Abliterant's [RANA](https://huggingface.co/abliterant/Qwen3.5-9B-RANA-abliterated) abliteration, and the engine ends any thinking after 1,024 tokens.
 
-- **It gets stuck thinking less.** On 160 generated coding tasks run through the app's agent, the old model wrote until the reply's token limit in 9 turns and ran out of time on 16 tasks. This one did so in 1 turn and on 12 tasks. A judge reading the transcripts counted 108 tasks done, 40 partly done and 12 failed, against 105, 35 and 20. That is one run each, so a few tasks either way are chance. It is no better at not repeating itself in what it does: in 16 conversations it issued the same tool call three times or more, against 12.
+- **It gets stuck thinking less.** On 160 generated coding tasks run through the app's agent, the old model wrote until the reply's token limit in 9 turns and ran out of time on 16 tasks. For this one the counts are 2 and 5. A judge reading the transcripts counted 106 tasks done, 44 partly done and 10 failed, against 105, 35 and 20. That is one run each, so a few tasks either way are chance. It is no better at not repeating itself in what it does: in 13 conversations it issued the same tool call three times or more, against 12.
 - **It reads faster.** A prompt token takes 7.7 ms in the agent tasks on the test Mac, against 13.2: the old model ran most of its layers twice.
 - **The cap on thinking is what makes this model answer.** RANA removes the refusals but not all of the hesitation. Given 100 requests of the kind the original model refuses, it left 67 without an answer when it was free to think on: it went back and forth between the same few sentences until the tokens ran out. With the cap it answers all 100: 64 carried out, 29 dodged, 7 refused, as labelled by a judge model. With thinking switched off it is more cautious: 30 carried out, 53 dodged, 17 refused. On the coding tasks the cap changed nothing we could measure (109 done, 35 partly and 16 failed without it).
 - **The drafter is not tuned to this model yet.** It is z-lab's public drafter for Qwen3.5-9B, trained on the original model's text. In the agent tasks 35% of the tokens it proposed were accepted, where the drafter we trained for the old model reached 76%. Drafting still changes nothing in the answers: all 32 test answers were token for token the same with and without it.
@@ -50,7 +56,7 @@ Up to 0.2.1 the app ran a looped variant of Qwen3.5-9B that we had abliterated o
 | A new chat starts responding after | about 1 s (15 s for the first chat after the app starts) | under 1 s (8 s for the first chat) |
 | Memory after a long prompt, besides the weights | 2.7 GB | 2.2 GB |
 
-Both columns were measured on the same machine on the same day, each run after it had rested, twice; the two versions were not run in turns. The first two rows are the ones that match real use: thinking on, about three minutes of continuous work, and the tasks passed 10/10 both times. The speed rows below them are short runs at temperature 0 with thinking off. The Air has no fan, and after half an hour of continuous work either version is slower.
+Both columns were measured on the same machine on the same day, each run after it had rested, twice; the two versions were not run in turns. The first two rows are the ones that match real use: thinking on, about three minutes of continuous work, and the tasks passed 10/10 both times. The speed rows below them are short runs at temperature 0 with thinking off. The Air has no fan, and after half an hour of continuous work either version is slower. The numbers were taken with 0.3.0; 0.3.1 differs from it by one rule in the prompt.
 
 ## The model
 
@@ -70,5 +76,5 @@ The app bundles OMP (MIT), llama.cpp with SenseNova Loop support (MIT) and a set
 ## Checksum
 
 ```
-d47bff96aebaadca0f9b73b1fc4747b1effc78aa419863987b48e1528891573e  Looper_0.3.0_aarch64.dmg
+c8060316aeb65c284d07a4cabadaeb3df35bbf4d83b54412d7ebc06aaf222eff  Looper_0.3.1_aarch64.dmg
 ```
